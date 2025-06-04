@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neurotypový dotazník - Zjistěte svůj tréninkový typ</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <div class="container">
+            <div class="landing-content">
+                <h1 class="landing-title">Neurotypový dotazník</h1>
+                <p class="landing-description">
+                    Neurotyping je moderní přístup k tréninku, který rozlišuje různé typy nervového systému. 
+                    Každý neurotyp má specifické potřeby v tréninku, výživě a regeneraci. 
+                    Objevte svůj ideální tréninkový přístup na základě vašich genetických predispozic.
+                </p>
+                <div class="landing-info">
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span>Odhadovaný čas: 10-15 minut</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📊</span>
+                        <span>8 sekcí dotazníku</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎯</span>
+                        <span>Personalizované výsledky</span>
+                    </div>
+                </div>
+                <button class="btn btn--primary btn--lg" onclick="startQuestionnaire()">
+                    Začít dotazník
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questionnaire Page -->
+    <div id="questionnaire-page" class="page">
+        <div class="container">
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="progress-text" id="progress-text">0% dokončeno</span>
+            </div>
+
+            <!-- Form Container -->
+            <div class="form-container">
+                <form id="questionnaire-form">
+
+                    <!-- Section A: Personal Info (updated without name/email) -->
+                    <div class="form-section active" data-section="A">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce A - Základní údaje</h2>
+                                <div class="form-group flex gap-16">
+                                    <div style="flex: 1;">
+                                        <label class="form-label">Věk *</label>
+                                        <input type="number" class="form-control" name="age" min="15" max="99" required>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label class="form-label">Pohlaví *</label>
+                                        <div class="radio-group">
+                                            <label><input type="radio" name="gender" value="male" required> Muž</label>
+                                            <label><input type="radio" name="gender" value="female" required> Žena</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group flex gap-16">
+                                    <div style="flex: 1;">
+                                        <label class="form-label">Výška (cm) *</label>
+                                        <input type="number" class="form-control" name="height" min="120" max="250" required>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label class="form-label">Váha (kg) *</label>
+                                        <input type="number" class="form-control" name="weight" min="30" max="200" required>
+                                    </div>
+                                </div>
+                                <div class="form-group flex gap-16">
+                                    <div style="flex: 1;">
+                                        <label class="form-label">Cílová váha (kg)</label>
+                                        <input type="number" class="form-control" name="targetWeight" min="30" max="200">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label class="form-label">Obvod pasu (cm)</label>
+                                        <input type="number" class="form-control" name="waistCircumference" min="50" max="200">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section B: Neurotype Characteristics -->
+                    <div class="form-section" data-section="B">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce B - Neurotypové charakteristiky</h2>
+                                <p class="section-description">Ohodnoťte každé tvrzení na škále 1-5 (1=vůbec nesouhlasím, 5=plně souhlasím)</p>
+                                <div id="neurotype-questions"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section C: Eating Habits -->
+                    <div class="form-section" data-section="C">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce C - Stravovací návyky</h2>
+                                <div class="form-group">
+                                    <label class="form-label">Kolikrát denně jíte? *</label>
+                                    <select class="form-control" name="mealsPerDay" required>
+                                        <option value="">Vyberte...</option>
+                                        <option value="3">3x denně</option>
+                                        <option value="4">4x denně</option>
+                                        <option value="5">5x denně</option>
+                                        <option value="6+">6+ denně</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Preferujete: *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="carbPreference" value="fast" required> Rychlé sacharidy</label>
+                                        <label><input type="radio" name="carbPreference" value="slow" required> Pomalé sacharidy</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Jak reagujete na cheat meal? *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="cheatMealReaction" value="good" required> Dobře</label>
+                                        <label><input type="radio" name="cheatMealReaction" value="bad" required> Špatně</label>
+                                        <label><input type="radio" name="cheatMealReaction" value="medium" required> Středně</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Jíte když jste ve stresu? *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="stressEating" value="yes" required> Ano</label>
+                                        <label><input type="radio" name="stressEating" value="no" required> Ne</label>
+                                        <label><input type="radio" name="stressEating" value="sometimes" required> Někdy</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section D: Training Preferences -->
+                    <div class="form-section" data-section="D">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce D - Tréninkové preference</h2>
+                                <div class="form-group">
+                                    <label class="form-label">Současná frekvence tréninku (týdně) *</label>
+                                    <select class="form-control" name="trainingFrequency" required>
+                                        <option value="">Vyberte...</option>
+                                        <option value="0">0x</option>
+                                        <option value="1">1x</option>
+                                        <option value="2">2x</option>
+                                        <option value="3">3x</option>
+                                        <option value="4">4x</option>
+                                        <option value="5">5x</option>
+                                        <option value="6">6x</option>
+                                        <option value="7">7x</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Preferovaný čas tréninku *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="trainingTime" value="morning" required> Ráno</label>
+                                        <label><input type="radio" name="trainingTime" value="afternoon" required> Odpoledne</label>
+                                        <label><input type="radio" name="trainingTime" value="evening" required> Večer</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Oblíbený typ tréninku *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="trainingType" value="strength" required> Síla</label>
+                                        <label><input type="radio" name="trainingType" value="cardio" required> Kardio</label>
+                                        <label><input type="radio" name="trainingType" value="combination" required> Kombinace</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section E: Sleep & Recovery -->
+                    <div class="form-section" data-section="E">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce E - Spánek a regenerace</h2>
+                                <div class="form-group">
+                                    <label class="form-label">Hodiny spánku denně *</label>
+                                    <select class="form-control" name="sleepHours" required>
+                                        <option value="">Vyberte...</option>
+                                        <option value="4">4 hodin</option>
+                                        <option value="5">5 hodin</option>
+                                        <option value="6">6 hodin</option>
+                                        <option value="7">7 hodin</option>
+                                        <option value="8">8 hodin</option>
+                                        <option value="9">9 hodin</option>
+                                        <option value="10">10 hodin</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Kvalita spánku (1-5) *</label>
+                                    <div class="rating-scale">
+                                        <label><input type="radio" name="sleepQuality" value="1" required> 1 - Velmi špatná</label>
+                                        <label><input type="radio" name="sleepQuality" value="2" required> 2 - Špatná</label>
+                                        <label><input type="radio" name="sleepQuality" value="3" required> 3 - Průměrná</label>
+                                        <label><input type="radio" name="sleepQuality" value="4" required> 4 - Dobrá</label>
+                                        <label><input type="radio" name="sleepQuality" value="5" required> 5 - Výborná</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Úroveň stresu (1-5) *</label>
+                                    <div class="rating-scale">
+                                        <label><input type="radio" name="stressLevel" value="1" required> 1 - Velmi nízká</label>
+                                        <label><input type="radio" name="stressLevel" value="2" required> 2 - Nízká</label>
+                                        <label><input type="radio" name="stressLevel" value="3" required> 3 - Střední</label>
+                                        <label><input type="radio" name="stressLevel" value="4" required> 4 - Vysoká</label>
+                                        <label><input type="radio" name="stressLevel" value="5" required> 5 - Velmi vysoká</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section F: Health Status -->
+                    <div class="form-section" data-section="F">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce F - Zdravotní stav</h2>
+                                <div class="form-group">
+                                    <label class="form-label">Zdravotní omezení (můžete vybrat více možností)</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" name="healthLimitations" value="none"> Žádné</label>
+                                        <label><input type="checkbox" name="healthLimitations" value="joints"> Klouby</label>
+                                        <label><input type="checkbox" name="healthLimitations" value="back"> Záda</label>
+                                        <label><input type="checkbox" name="healthLimitations" value="heart"> Srdce</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Užíváte nějaké léky? *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="medications" value="no" required> Ne</label>
+                                        <label><input type="radio" name="medications" value="yes" required> Ano</label>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="medications-details" style="display: none;">
+                                    <label class="form-label">Jaké léky užíváte?</label>
+                                    <textarea class="form-control" name="medicationsDetails" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section G: Motivation & Goals -->
+                    <div class="form-section" data-section="G">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce G - Motivace a cíle</h2>
+                                <div class="form-group">
+                                    <label class="form-label">Hlavní cíl *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="mainGoal" value="lose-weight" required> Zhubnout</label>
+                                        <label><input type="radio" name="mainGoal" value="gain-muscle" required> Nabrat svaly</label>
+                                        <label><input type="radio" name="mainGoal" value="improve-fitness" required> Zlepšit kondici</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Motivace (můžete vybrat více možností)</label>
+                                    <div class="checkbox-group">
+                                        <label><input type="checkbox" name="motivation" value="appearance"> Vzhled</label>
+                                        <label><input type="checkbox" name="motivation" value="health"> Zdraví</label>
+                                        <label><input type="checkbox" name="motivation" value="performance"> Výkon</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section H: Additional Info -->
+                    <div class="form-section" data-section="H">
+                        <div class="card">
+                            <div class="card__body">
+                                <h2>Sekce H - Doplňující informace</h2>
+                                <div class="form-group">
+                                    <label class="form-label">Kouření *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="smoking" value="yes" required> Ano</label>
+                                        <label><input type="radio" name="smoking" value="no" required> Ne</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Alkohol *</label>
+                                    <div class="radio-group">
+                                        <label><input type="radio" name="alcohol" value="never" required> Nikdy</label>
+                                        <label><input type="radio" name="alcohol" value="rarely" required> Zřídka</label>
+                                        <label><input type="radio" name="alcohol" value="often" required> Často</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Poznámky</label>
+                                    <textarea class="form-control" name="notes" rows="4" placeholder="Zde můžete napsat jakékoliv další informace..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn--outline" id="prev-btn" onclick="previousSection()" style="display: none;">
+                        ← Zpět
+                    </button>
+                    <button type="button" class="btn btn--primary" id="next-btn" onclick="nextSection()">
+                        Další →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Page -->
+    <div id="loading-page" class="page">
+        <div class="container">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <h2>Vyhodnocuji váš neurotyp...</h2>
+                <p>Prosím čekejte, analyzujeme vaše odpovědi a vytváříme personalizovaná doporučení.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Page -->
+    <div id="results-page" class="page">
+        <div class="container">
+            <div class="results-content">
+                <h1>Váš neurotyp</h1>
+
+                <!-- Radar Chart Container -->
+                <div class="chart-container">
+                    <h3>Vaše neurotypové skóre</h3>
+                    <canvas id="neurotypeChart" width="400" height="400"></canvas>
+                </div>
+
+                <div class="neurotype-result" id="neurotype-result">
+                    <!-- Results will be inserted here -->
+                </div>
+
+                <!-- Contact Information Section -->
+                <div class="contact-section" id="contact-section">
+                    <div class="card contact-card">
+                        <div class="card__body">
+                            <h2>💬 Potřebujete pomoc s implementací?</h2>
+                            <p>Pokud si nejste jisti interpretací výsledků nebo byste chtěli individuální konzultaci k vašemu tréninkovému a výživovému plánu, můžete se na mě obrátit. Společně můžeme vyladit váš program podle vašeho neurotypu pro maximální efektivitu.</p>
+                            <p>Jsem k dispozici pro osobní konzultace a dlouhodobou spolupráci při dosahování vašich fitness cílů.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn--primary" onclick="exportResults()">
+                        📄 Exportovat výsledky
+                    </button>
+                    <button class="btn btn--outline" onclick="startOver()">
+                        🔄 Začít znovu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
